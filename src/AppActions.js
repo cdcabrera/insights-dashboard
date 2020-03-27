@@ -51,3 +51,19 @@ export const patchmanFetchEnhancements = (options) => ({
     type: ActionTypes.PATCHMAN_ENHANCEMENTS_FETCH,
     payload: fetchData(ActionTypes.PATCHMAN_ENHANCEMENTS_FETCH_URL, {}, options)
 });
+
+export const subscriptionsUtilizedOpenShiftFetch = options => ({
+    type: ActionTypes.SUBSCRIPTIONS_UTILIZED_OPENSHIFT_FETCH,
+    payload: Promise.all([
+        fetchData(ActionTypes.SUBSCRIPTIONS_UTILIZED_OPENSHIFT_REPORT_FETCH_URL, {}, options),
+        fetchData(ActionTypes.SUBSCRIPTIONS_UTILIZED_OPENSHIFT_CAPACITY_FETCH_URL, {}, options)
+    ])
+});
+
+export const subscriptionsUtilizedRhelFetch = options => ({
+    type: ActionTypes.SUBSCRIPTIONS_UTILIZED_RHEL_FETCH,
+    payload: Promise.all([
+        fetchData(ActionTypes.SUBSCRIPTIONS_UTILIZED_RHEL_REPORT_FETCH_URL, {}, options),
+        fetchData(ActionTypes.SUBSCRIPTIONS_UTILIZED_RHEL_CAPACITY_FETCH_URL, {}, options)
+    ])
+});

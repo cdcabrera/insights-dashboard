@@ -33,3 +33,11 @@ export const PATCHMAN_BUGS_FETCH_URL = `${BASE_URL}/${PATCHMAN_ID}/${PATCHMAN_VE
 export const PATCHMAN_BUGS_FETCH = 'PATCHMAN_BUGS_FETCH';
 export const PATCHMAN_ENHANCEMENTS_FETCH_URL = `${BASE_URL}/${PATCHMAN_ID}/${PATCHMAN_VER}/advisories/?filter[advisory_type]=1`;
 export const PATCHMAN_ENHANCEMENTS_FETCH = 'PATCHMAN_ENHANCEMENTS_FETCH';
+
+// Subscriptions Utilized Constants
+export const SUBSCRIPTIONS_UTILIZED_OPENSHIFT_FETCH = 'SUBSCRIPTIONS_UTILIZED_OPENSHIFT_FETCH';
+export const SUBSCRIPTIONS_UTILIZED_OPENSHIFT_REPORT_FETCH_URL = `${BASE_URL}/rhsm-subscriptions/v1/tally/products/OpenShift%20Container%20Platform`;
+export const SUBSCRIPTIONS_UTILIZED_OPENSHIFT_CAPACITY_FETCH_URL = `${BASE_URL}/rhsm-subscriptions/v1/capacity/products/OpenShift%20Container%20Platform`;
+export const SUBSCRIPTIONS_UTILIZED_RHEL_FETCH = 'SUBSCRIPTIONS_UTILIZED_RHEL_FETCH';
+export const SUBSCRIPTIONS_UTILIZED_RHEL_REPORT_FETCH_URL = `${BASE_URL}/rhsm-subscriptions/v1/tally/products/RHEL`;
+export const SUBSCRIPTIONS_UTILIZED_RHEL_CAPACITY_FETCH_URL = `${BASE_URL}/rhsm-subscriptions/v1/capacity/products/RHEL`;
