@@ -7,3 +7,8 @@ export const RHSM_API_RESPONSE_DATA_TYPES = {
     HAS_DATA: 'has_data',
     HAS_INFINITE: 'has_infinite_quantity'
 };
+
+export const RHSM_API_PRODUCT_ID_TYPES = {
+    RHEL: 'RHEL',
+    OPENSHIFT: 'OpenShift Container Platform'
+};

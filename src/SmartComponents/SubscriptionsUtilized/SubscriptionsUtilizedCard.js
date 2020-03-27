@@ -6,11 +6,12 @@ import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import { TemplateCard, TemplateCardBody, TemplateCardHeader } from '../../PresentationalComponents/Template/TemplateCard';
+import Loading from '../../PresentationalComponents/Loading/Loading';
 import { ProgressTemplate } from '../../../../insights-dashboard/src/ChartTemplates/Progress/ProgressTemplate';
 import messages from '../../Messages';
 
 import * as AppActions from '../../AppActions';
-import { RHSM_API_RESPONSE_DATA, RHSM_API_RESPONSE_DATA_TYPES } from './Constants';
+import { RHSM_API_RESPONSE_DATA, RHSM_API_RESPONSE_DATA_TYPES, RHSM_API_PRODUCT_ID_TYPES } from './Constants';
 
 /**
  * Subscriptions utilized card for showing the portion of Subscriptions used.
@@ -123,7 +124,7 @@ class SubscriptionsUtilizedCard extends Component {
      * Call the RHSM APIs.
      */
     getChartData() {
-        const { subscriptionsUtilizedOpenShiftFetch, subscriptionsUtilizedRhelFetch } = this.props;
+        const { subscriptionsUtilizedProductOneFetch, subscriptionsUtilizedProductTwoFetch } = this.props;
         const { startDate, endDate } = SubscriptionsUtilizedCard.setRangedDateTime();
         const options = {
             granularity: 'DAILY',
@@ -131,8 +132,8 @@ class SubscriptionsUtilizedCard extends Component {
             ending: endDate.toISOString()
         };
 
-        subscriptionsUtilizedOpenShiftFetch(options);
-        subscriptionsUtilizedRhelFetch(options);
+        subscriptionsUtilizedProductOneFetch(RHSM_API_PRODUCT_ID_TYPES.OPENSHIFT, options);
+        subscriptionsUtilizedProductTwoFetch(RHSM_API_PRODUCT_ID_TYPES.RHEL, options);
     }
 
     /**
@@ -144,13 +145,13 @@ class SubscriptionsUtilizedCard extends Component {
      *     capacity: (number|null|undefined), percentage: (number|null|undefined) })}}
      */
     setChartData() {
-        const { subscriptionsUtilizedOpenShift,
-            subscriptionsUtilizedOpenShiftFetchStatus, subscriptionsUtilizedRhel, subscriptionsUtilizedRhelFetchStatus } = this.props;
+        const { subscriptionsUtilizedProductOne,
+            subscriptionsUtilizedProductOneFetchStatus, subscriptionsUtilizedProductTwo, subscriptionsUtilizedProductTwoFetchStatus } = this.props;
         const chartData = { openshift: {}, rhel: {} };
 
-        if (subscriptionsUtilizedOpenShiftFetchStatus === 'fulfilled' || subscriptionsUtilizedRhelFetchStatus === 'fulfilled') {
-            const [openshiftReport = {}, openshiftCapacity = {}] = Immutable.asMutable(subscriptionsUtilizedOpenShift, { deep: true }) || [];
-            const [rhelReport = {}, rhelCapacity = {}] = Immutable.asMutable(subscriptionsUtilizedRhel, { deep: true }) || [];
+        if (subscriptionsUtilizedProductOneFetchStatus === 'fulfilled' || subscriptionsUtilizedProductTwoFetchStatus === 'fulfilled') {
+            const [openshiftReport = {}, openshiftCapacity = {}] = Immutable.asMutable(subscriptionsUtilizedProductOne, { deep: true }) || [];
+            const [rhelReport = {}, rhelCapacity = {}] = Immutable.asMutable(subscriptionsUtilizedProductTwo, { deep: true }) || [];
 
             chartData.openshift = SubscriptionsUtilizedCard.filterChartData(
                 openshiftReport[RHSM_API_RESPONSE_DATA],
@@ -169,54 +170,49 @@ class SubscriptionsUtilizedCard extends Component {
     }
 
     /**
-     * ToDo: Subscriptions data display
-     * Tooltips: temp copy, apply real copy, spacing adjustment
-     * Progress bar: loading and/or disabled versions, use "*FetchStatus" props
-     * Progress bar: Title links for RHEL and OpenShift towards Subscription Watch. Plan for Summit is to have Subs Watch within "stable"
-     *    RHEL, [/beta]/subscriptions/rhel-sw/all
-     *    OpenShift, [/beta]/subscriptions/openshift-sw
-     * Locale: if applicable, apply towards product names, tooltip content.
-     */
-    /**
      * Render a chart/progressbar.
      *
      * @return {Node}
      */
     render() {
-        const { intl } = this.props;
+        const { intl, subscriptionsUtilizedProductOneFetchStatus, subscriptionsUtilizedProductTwoFetchStatus } = this.props;
         const { openshift, rhel } = this.setChartData();
 
         const rhelTooltip = (
             <ul>
-                <li>Report/Sockets: {rhel.report}</li>
-                <li>Capacity/Threshold: {rhel.capacity}</li>
+                <li>RHEL sockets: {rhel.report}</li>
+                <li>Subscription threshold: {rhel.capacity}</li>
+                <li>Data from: {moment.utc(rhel.date).format('MMM D, YYYY')}</li>
             </ul>
         );
 
         const openshiftTooltip = (
             <ul>
-                <li>Report/Cores: {openshift.report}</li>
-                <li>Capacity/Threshold: {openshift.capacity}</li>
+                <li>OpenShift Cores: {openshift.report}</li>
+                <li>Subscription threshold: {openshift.capacity}</li>
+                <li>Data from: {moment.utc(openshift.date).format('MMM D, YYYY')}</li>
             </ul>
         );
 
         const charts = [
-            <Tooltip key="rhel" content={ rhelTooltip } position={ TooltipPosition.top } distance={ -30 }>
-                <ProgressTemplate
-                    title="Red Hat Enterprise Linux"
-                    value={ (rhel.percentage <= 100 && rhel.percentage) || 0 }
-                    label={ `${rhel.percentage}%` }
-                    variant={ (rhel.percentage <= 100 && 'info') || (rhel.percentage > 100 && 'danger') }
-                />
-            </Tooltip>,
-            <Tooltip key="openshift" content={ openshiftTooltip } position={ TooltipPosition.top } distance={ -30 }>
-                <ProgressTemplate
-                    title="Red Hat OpenShift"
-                    value={ (openshift.percentage <= 100 && openshift.percentage) || 0 }
-                    label={ `${openshift.percentage}%` }
-                    variant={ (openshift.percentage <= 100 && 'info') || (openshift.percentage > 100 && 'danger') }
-                />
-            </Tooltip>
+            (subscriptionsUtilizedProductTwoFetchStatus === 'fulfilled' &&
+                <Tooltip key="rhel" content={ rhelTooltip } position={ TooltipPosition.top } distance={ -30 }>
+                    <ProgressTemplate
+                        title="Red Hat Enterprise Linux"
+                        value={ (rhel.percentage <= 100 && rhel.percentage) || 0 }
+                        label={ `${rhel.percentage}%` }
+                        variant={ (rhel.percentage <= 100 && 'info') || (rhel.percentage > 100 && 'danger') }
+                    />
+                </Tooltip>) || <Loading key="rhelLoad" />,
+            (subscriptionsUtilizedProductOneFetchStatus === 'fulfilled' &&
+                <Tooltip key="openshift" content={ openshiftTooltip } position={ TooltipPosition.top } distance={ -30 }>
+                    <ProgressTemplate
+                        title="Red Hat OpenShift"
+                        value={ (openshift.percentage <= 100 && openshift.percentage) || 0 }
+                        label={ `${openshift.percentage}%` }
+                        variant={ (openshift.percentage <= 100 && 'info') || (openshift.percentage > 100 && 'danger') }
+                    />
+                </Tooltip>) || <Loading key="openshiftLoad" />
         ];
 
         return (
@@ -232,26 +228,24 @@ class SubscriptionsUtilizedCard extends Component {
 
 SubscriptionsUtilizedCard.propTypes = {
     intl: PropTypes.any,
-    subscriptionsUtilizedOpenShift: PropTypes.array,
-    subscriptionsUtilizedOpenShiftFetch: PropTypes.func,
-    subscriptionsUtilizedOpenShiftFetchStatus: PropTypes.string,
-    subscriptionsUtilizedRhel: PropTypes.array,
-    subscriptionsUtilizedRhelFetch: PropTypes.func,
-    subscriptionsUtilizedRhelFetchStatus: PropTypes.string
+    subscriptionsUtilizedProductOne: PropTypes.array,
+    subscriptionsUtilizedProductOneFetch: PropTypes.func,
+    subscriptionsUtilizedProductOneFetchStatus: PropTypes.string,
+    subscriptionsUtilizedProductTwo: PropTypes.array,
+    subscriptionsUtilizedProductTwoFetch: PropTypes.func,
+    subscriptionsUtilizedProductTwoFetchStatus: PropTypes.string
 };
 
 const mapStateToProps = state => ({
-    subscriptionsUtilizedOpenShift: state.DashboardStore.subscriptionsUtilizedOpenShift,
-    subscriptionsUtilizedOpenShiftFetchStatus: state.DashboardStore.subscriptionsUtilizedOpenShiftFetchStatus,
-    subscriptionsUtilizedRhel: state.DashboardStore.subscriptionsUtilizedRhel,
-    subscriptionsUtilizedRhelFetchStatus: state.DashboardStore.subscriptionsUtilizedRhelFetchStatus
+    subscriptionsUtilizedProductOne: state.DashboardStore.subscriptionsUtilizedProductOne,
+    subscriptionsUtilizedProductOneFetchStatus: state.DashboardStore.subscriptionsUtilizedProductOneFetchStatus,
+    subscriptionsUtilizedProductTwo: state.DashboardStore.subscriptionsUtilizedProductTwo,
+    subscriptionsUtilizedProductTwoFetchStatus: state.DashboardStore.subscriptionsUtilizedProductTwoFetchStatus
 });
 
 const mapDispatchToProps = dispatch => ({
-    subscriptionsUtilizedOpenShiftFetch: options => dispatch(AppActions.subscriptionsUtilizedOpenShiftFetch(options)),
-    subscriptionsUtilizedRhelFetch: options => dispatch(AppActions.subscriptionsUtilizedRhelFetch(options))
+    subscriptionsUtilizedProductOneFetch: (productId, options) => dispatch(AppActions.subscriptionsUtilizedProductOneFetch(productId, options)),
+    subscriptionsUtilizedProductTwoFetch: (productId, options) => dispatch(AppActions.subscriptionsUtilizedProductTwoFetch(productId, options))
 });
 
-const ConnectedSubscriptionsUtilizedCard = injectIntl(connect(mapStateToProps, mapDispatchToProps)(SubscriptionsUtilizedCard));
-
-export { ConnectedSubscriptionsUtilizedCard as default, ConnectedSubscriptionsUtilizedCard, SubscriptionsUtilizedCard };
+export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(SubscriptionsUtilizedCard));

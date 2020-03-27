@@ -52,18 +52,18 @@ export const patchmanFetchEnhancements = (options) => ({
     payload: fetchData(ActionTypes.PATCHMAN_ENHANCEMENTS_FETCH_URL, {}, options)
 });
 
-export const subscriptionsUtilizedOpenShiftFetch = options => ({
-    type: ActionTypes.SUBSCRIPTIONS_UTILIZED_OPENSHIFT_FETCH,
+export const subscriptionsUtilizedProductOneFetch = (id, options) => ({
+    type: ActionTypes.SUBSCRIPTIONS_UTILIZED_PRODUCT_ONE_FETCH,
     payload: Promise.all([
-        fetchData(ActionTypes.SUBSCRIPTIONS_UTILIZED_OPENSHIFT_REPORT_FETCH_URL, {}, options),
-        fetchData(ActionTypes.SUBSCRIPTIONS_UTILIZED_OPENSHIFT_CAPACITY_FETCH_URL, {}, options)
+        fetchData(`${ActionTypes.SUBSCRIPTIONS_UTILIZED_REPORT_FETCH_URL}${id}`, {}, options),
+        fetchData(`${ActionTypes.SUBSCRIPTIONS_UTILIZED_CAPACITY_FETCH_URL}${id}`, {}, options)
     ])
 });
 
-export const subscriptionsUtilizedRhelFetch = options => ({
-    type: ActionTypes.SUBSCRIPTIONS_UTILIZED_RHEL_FETCH,
+export const subscriptionsUtilizedProductTwoFetch = (id, options) => ({
+    type: ActionTypes.SUBSCRIPTIONS_UTILIZED_PRODUCT_TWO_FETCH,
     payload: Promise.all([
-        fetchData(ActionTypes.SUBSCRIPTIONS_UTILIZED_RHEL_REPORT_FETCH_URL, {}, options),
-        fetchData(ActionTypes.SUBSCRIPTIONS_UTILIZED_RHEL_CAPACITY_FETCH_URL, {}, options)
+        fetchData(`${ActionTypes.SUBSCRIPTIONS_UTILIZED_REPORT_FETCH_URL}${id}`, {}, options),
+        fetchData(`${ActionTypes.SUBSCRIPTIONS_UTILIZED_CAPACITY_FETCH_URL}${id}`, {}, options)
     ])
 });

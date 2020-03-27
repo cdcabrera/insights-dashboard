@@ -22,10 +22,10 @@ const initialState = Immutable({
     patchmanBugsStatus: '',
     patchmanEnhancements: {},
     patchmanEnhancementsStatus: '',
-    subscriptionsUtilizedOpenShift: [],
-    subscriptionsUtilizedOpenShiftFetchStatus: '',
-    subscriptionsUtilizedRhel: [],
-    subscriptionsUtilizedRhelFetchStatus: ''
+    subscriptionsUtilizedProductOne: [],
+    subscriptionsUtilizedProductOneFetchStatus: '',
+    subscriptionsUtilizedProductTwo: [],
+    subscriptionsUtilizedProductTwoFetchStatus: ''
 });
 
 export const DashboardStore = (state = initialState, action) => {
@@ -131,27 +131,27 @@ export const DashboardStore = (state = initialState, action) => {
         case `${ActionTypes.PATCHMAN_ENHANCEMENTS_FETCH}_REJECTED`:
             return state.set('patchmanEnhancementsStatus', 'rejected');
 
-        // SubsUtilizedOpenShift
-        case `${ActionTypes.SUBSCRIPTIONS_UTILIZED_OPENSHIFT_FETCH}_PENDING`:
-            return state.set('subscriptionsUtilizedOpenShiftFetchStatus', 'pending');
-        case `${ActionTypes.SUBSCRIPTIONS_UTILIZED_OPENSHIFT_FETCH}_FULFILLED`:
+        // SubsUtilized Product One
+        case `${ActionTypes.SUBSCRIPTIONS_UTILIZED_PRODUCT_ONE_FETCH}_PENDING`:
+            return state.set('subscriptionsUtilizedProductOneFetchStatus', 'pending');
+        case `${ActionTypes.SUBSCRIPTIONS_UTILIZED_PRODUCT_ONE_FETCH}_FULFILLED`:
             return Immutable.merge(state, {
-                subscriptionsUtilizedOpenShift: action.payload,
-                subscriptionsUtilizedOpenShiftFetchStatus: 'fulfilled'
+                subscriptionsUtilizedProductOne: action.payload,
+                subscriptionsUtilizedProductOneFetchStatus: 'fulfilled'
             });
-        case `${ActionTypes.SUBSCRIPTIONS_UTILIZED_OPENSHIFT_FETCH}_REJECTED`:
-            return state.set('subscriptionsUtilizedOpenShiftFetchStatus', 'rejected');
+        case `${ActionTypes.SUBSCRIPTIONS_UTILIZED_PRODUCT_ONE_FETCH}_REJECTED`:
+            return state.set('subscriptionsUtilizedProductOneFetchStatus', 'rejected');
 
-        // SubsUtilizedRhel
-        case `${ActionTypes.SUBSCRIPTIONS_UTILIZED_RHEL_FETCH}_PENDING`:
-            return state.set('subscriptionsUtilizedRhelFetchStatus', 'pending');
-        case `${ActionTypes.SUBSCRIPTIONS_UTILIZED_RHEL_FETCH}_FULFILLED`:
+        // SubsUtilized Product Two
+        case `${ActionTypes.SUBSCRIPTIONS_UTILIZED_PRODUCT_TWO_FETCH}_PENDING`:
+            return state.set('subscriptionsUtilizedProductTwoFetchStatus', 'pending');
+        case `${ActionTypes.SUBSCRIPTIONS_UTILIZED_PRODUCT_TWO_FETCH}_FULFILLED`:
             return Immutable.merge(state, {
-                subscriptionsUtilizedRhel: action.payload,
-                subscriptionsUtilizedRhelFetchStatus: 'fulfilled'
+                subscriptionsUtilizedProductTwo: action.payload,
+                subscriptionsUtilizedProductTwoFetchStatus: 'fulfilled'
             });
-        case `${ActionTypes.SUBSCRIPTIONS_UTILIZED_RHEL_FETCH}_REJECTED`:
-            return state.set('subscriptionsUtilizedRhelFetchStatus', 'rejected');
+        case `${ActionTypes.SUBSCRIPTIONS_UTILIZED_PRODUCT_TWO_FETCH}_REJECTED`:
+            return state.set('subscriptionsUtilizedProductTwoFetchStatus', 'rejected');
 
         default:
             return state;
