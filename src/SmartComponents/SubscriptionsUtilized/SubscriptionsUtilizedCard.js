@@ -139,29 +139,29 @@ class SubscriptionsUtilizedCard extends Component {
     /**
      * Prepare chart data for filtering.
      *
-     * @returns {{openshift: ({}|{ date: Date, report: (number|null|undefined),
+     * @returns {{productOne: ({}|{ date: Date, report: (number|null|undefined),
      *     capacity: (number|null|undefined), percentage: (number|null|undefined) }),
-     *     rhel: ({}|{ date: Date, report: (number|null|undefined),
+     *     productTwo: ({}|{ date: Date, report: (number|null|undefined),
      *     capacity: (number|null|undefined), percentage: (number|null|undefined) })}}
      */
     setChartData() {
         const { subscriptionsUtilizedProductOne,
             subscriptionsUtilizedProductOneFetchStatus, subscriptionsUtilizedProductTwo, subscriptionsUtilizedProductTwoFetchStatus } = this.props;
-        const chartData = { openshift: {}, rhel: {} };
+        const chartData = { productOne: {}, productTwo: {} };
 
         if (subscriptionsUtilizedProductOneFetchStatus === 'fulfilled' || subscriptionsUtilizedProductTwoFetchStatus === 'fulfilled') {
-            const [openshiftReport = {}, openshiftCapacity = {}] = Immutable.asMutable(subscriptionsUtilizedProductOne, { deep: true }) || [];
-            const [rhelReport = {}, rhelCapacity = {}] = Immutable.asMutable(subscriptionsUtilizedProductTwo, { deep: true }) || [];
+            const [productOneReport = {}, productOneCapacity = {}] = Immutable.asMutable(subscriptionsUtilizedProductOne, { deep: true }) || [];
+            const [productTwoReport = {}, productTwoCapacity = {}] = Immutable.asMutable(subscriptionsUtilizedProductTwo, { deep: true }) || [];
 
-            chartData.openshift = SubscriptionsUtilizedCard.filterChartData(
-                openshiftReport[RHSM_API_RESPONSE_DATA],
-                openshiftCapacity[RHSM_API_RESPONSE_DATA],
+            chartData.productOne = SubscriptionsUtilizedCard.filterChartData(
+                productOneReport[RHSM_API_RESPONSE_DATA],
+                productOneCapacity[RHSM_API_RESPONSE_DATA],
                 [RHSM_API_RESPONSE_DATA_TYPES.SOCKETS]
             );
 
-            chartData.rhel = SubscriptionsUtilizedCard.filterChartData(
-                rhelReport[RHSM_API_RESPONSE_DATA],
-                rhelCapacity[RHSM_API_RESPONSE_DATA],
+            chartData.productTwo = SubscriptionsUtilizedCard.filterChartData(
+                productTwoReport[RHSM_API_RESPONSE_DATA],
+                productTwoCapacity[RHSM_API_RESPONSE_DATA],
                 [RHSM_API_RESPONSE_DATA_TYPES.CORES]
             );
         }
@@ -176,50 +176,50 @@ class SubscriptionsUtilizedCard extends Component {
      */
     render() {
         const { intl, subscriptionsUtilizedProductOneFetchStatus, subscriptionsUtilizedProductTwoFetchStatus } = this.props;
-        const { openshift, rhel } = this.setChartData();
+        const { productOne, productTwo } = this.setChartData();
 
-        const rhelTooltip = (
+        const productTwoTooltip = (
             <ul>
-                <li>RHEL sockets: {rhel.report}</li>
-                <li>Subscription threshold: {rhel.capacity}</li>
-                <li>Data from: {moment.utc(rhel.date).format('MMM D, YYYY')}</li>
+                <li>RHEL sockets: {productTwo.report}</li>
+                <li>Subscription threshold: {productTwo.capacity}</li>
+                <li>Data from: {moment.utc(productTwo.date).format('MMM D, YYYY')}</li>
             </ul>
         );
 
-        const openshiftTooltip = (
+        const productOneTooltip = (
             <ul>
-                <li>OpenShift Cores: {openshift.report}</li>
-                <li>Subscription threshold: {openshift.capacity}</li>
-                <li>Data from: {moment.utc(openshift.date).format('MMM D, YYYY')}</li>
+                <li>OpenShift Cores: {productOne.report}</li>
+                <li>Subscription threshold: {productOne.capacity}</li>
+                <li>Data from: {moment.utc(productOne.date).format('MMM D, YYYY')}</li>
             </ul>
         );
 
         const charts = [
             (subscriptionsUtilizedProductTwoFetchStatus === 'fulfilled' &&
-                <Tooltip key="rhel" content={ rhelTooltip } position={ TooltipPosition.top } distance={ -30 }>
+                <Tooltip key="productTwo" content={ productTwoTooltip } position={ TooltipPosition.top } distance={ -30 }>
                     <ProgressTemplate
                         title="Red Hat Enterprise Linux"
-                        value={ (rhel.percentage <= 100 && rhel.percentage) || 0 }
-                        label={ `${rhel.percentage}%` }
-                        variant={ (rhel.percentage <= 100 && 'info') || (rhel.percentage > 100 && 'danger') }
+                        value={ (productTwo.percentage <= 100 && productTwo.percentage) || 0 }
+                        label={ `${productTwo.percentage}%` }
+                        variant={ (productTwo.percentage <= 100 && 'info') || (productTwo.percentage > 100 && 'danger') }
                     />
-                </Tooltip>) || <Loading key="rhelLoad" />,
+                </Tooltip>) || <Loading key="productTwoLoad" />,
             (subscriptionsUtilizedProductOneFetchStatus === 'fulfilled' &&
-                <Tooltip key="openshift" content={ openshiftTooltip } position={ TooltipPosition.top } distance={ -30 }>
+                <Tooltip key="productOne" content={ productOneTooltip } position={ TooltipPosition.top } distance={ -30 }>
                     <ProgressTemplate
                         title="Red Hat OpenShift"
-                        value={ (openshift.percentage <= 100 && openshift.percentage) || 0 }
-                        label={ `${openshift.percentage}%` }
-                        variant={ (openshift.percentage <= 100 && 'info') || (openshift.percentage > 100 && 'danger') }
+                        value={ (productOne.percentage <= 100 && productOne.percentage) || 0 }
+                        label={ `${productOne.percentage}%` }
+                        variant={ (productOne.percentage <= 100 && 'info') || (productOne.percentage > 100 && 'danger') }
                     />
-                </Tooltip>) || <Loading key="openshiftLoad" />
+                </Tooltip>) || <Loading key="productOneLoad" />
         ];
 
         return (
             <TemplateCard appName='SubscriptionsUtilized'>
                 <TemplateCardHeader subtitle={ intl.formatMessage(messages.subscriptionsUtilized) }/>
                 <TemplateCardBody>
-                    {(openshift.percentage > rhel.percentage && openshift.percentage > 100) ? charts.reverse() : charts}
+                    {(productOne.percentage > productTwo.percentage && productOne.percentage > 100) ? charts.reverse() : charts}
                 </TemplateCardBody>
             </TemplateCard>
         );
