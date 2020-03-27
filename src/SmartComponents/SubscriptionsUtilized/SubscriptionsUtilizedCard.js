@@ -9,9 +9,8 @@ import { TemplateCard, TemplateCardBody, TemplateCardHeader } from '../../Presen
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import { ProgressTemplate } from '../../../../insights-dashboard/src/ChartTemplates/Progress/ProgressTemplate';
 import messages from '../../Messages';
-
 import * as AppActions from '../../AppActions';
-import { RHSM_API_RESPONSE_DATA, RHSM_API_RESPONSE_DATA_TYPES, RHSM_API_PRODUCT_ID_TYPES } from './Constants';
+import { RHSM_API_RESPONSE_DATA, RHSM_API_RESPONSE_DATA_TYPES, RHSM_API_PRODUCT_ID_TYPES, RHSM_API_QUERY_GRANULARITY_TYPES } from './Constants';
 
 /**
  * Subscriptions utilized card for showing the portion of Subscriptions used.
@@ -67,7 +66,7 @@ class SubscriptionsUtilizedCard extends Component {
     }
 
     /**
-     * Filter report and capacity data against expected API response schema. Apply percentage.
+     * Filter report and capacity data against expected API response. Apply percentage and date.
      *
      * @param {Array} report
      * @param {Array} capacity
@@ -127,7 +126,7 @@ class SubscriptionsUtilizedCard extends Component {
         const { subscriptionsUtilizedProductOneFetch, subscriptionsUtilizedProductTwoFetch } = this.props;
         const { startDate, endDate } = SubscriptionsUtilizedCard.setRangedDateTime();
         const options = {
-            granularity: 'DAILY',
+            granularity: RHSM_API_QUERY_GRANULARITY_TYPES.DAILY,
             beginning: startDate.toISOString(),
             ending: endDate.toISOString()
         };

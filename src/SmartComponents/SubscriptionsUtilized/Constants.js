@@ -12,3 +12,7 @@ export const RHSM_API_PRODUCT_ID_TYPES = {
     RHEL: 'RHEL',
     OPENSHIFT: 'OpenShift Container Platform'
 };
+
+export const RHSM_API_QUERY_GRANULARITY_TYPES = {
+    DAILY: 'daily'
+};
